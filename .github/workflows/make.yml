@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    name: Development build
+    name: Development build (MAKE)
     strategy:
       matrix:
         include:
