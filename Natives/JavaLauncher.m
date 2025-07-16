@@ -1,3 +1,8 @@
+#import <Foundation/Foundation.h>
+#include <sys/mman.h> 
+#include <sys/types.h> 
+#include <unistd.h>
+
 #include <dirent.h>
 #include <dlfcn.h>
 #include <errno.h>
