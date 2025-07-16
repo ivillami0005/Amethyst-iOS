@@ -14,7 +14,7 @@ jobs:
         include:
           - platform: 2
             platform_name: ios
-    
+
     runs-on: macos-14
 
     steps:
@@ -61,10 +61,18 @@ jobs:
           sysctl -n hw.ncpu
           export CFLAGS="-O0 -g -fno-inline"
           export CXXFLAGS="-O0 -g -fno-inline"
+          # Build both IPA and TIPA
           gmake -j$(sysctl -n hw.ncpu) dsym package PLATFORM=${{ matrix.platform }}
+          gmake -j$(sysctl -n hw.ncpu) dsym package PLATFORM=${{ matrix.platform }} TROLLSTORE_JIT_ENT=1
 
       - name: Upload regular ipa
         uses: actions/upload-artifact@main
         with:
           name: org.angelauramc.amethyst-${{ matrix.platform_name }}.ipa
           path: artifacts/org.angelauramc.amethyst-*-${{ matrix.platform_name }}.ipa
+
+      - name: Upload tipa
+        uses: actions/upload-artifact@main
+        with:
+          name: org.angelauramc.amethyst-${{ matrix.platform_name }}-trollstore.tipa
+          path: artifacts/org.angelauramc.amethyst-*-${{ matrix.platform_name }}-trollstore.tipa
