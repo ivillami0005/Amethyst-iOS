@@ -1,6 +1,9 @@
 name: Development build
 
 on:
+  push:
+    branches:
+      - renderer/mobileglues
   workflow_dispatch:
 
 jobs:
@@ -14,39 +17,40 @@ jobs:
     
     runs-on: macos-14
 
-
     steps:
-      
       - name: Remove work folders
         run: |
-          echo "before"
+          echo "Before cleanup"
           ls -lah ./
           rm -rf ./* || true
           rm -rf ./.??* || true
-          echo "after"
+          echo "After cleanup"
           ls -lah ./
-          
-      - name: Checkout repository
-        uses: actions/checkout@main
 
-      - name: Checkout repository submodules
-        run: git submodule update --init --recursive
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
       - name: Select Xcode 15.2
         run: sudo xcode-select -s /Applications/Xcode_15.2.app
 
       - name: Install Rosetta
         run: |
           /usr/sbin/softwareupdate --install-rosetta --agree-to-license
+
       - name: Install dpkg
         run: |
-          brew install dpkg fakeroot || true # only if you're building debs
-  
+          brew install dpkg fakeroot || true
+
       - name: Install GNU Make (gmake)
         run: brew install make
+
       - name: Install JDK 8
         run: |
           brew install --cask temurin@8
           java -version
+
       - name: Install ldid
         run: brew install ldid
 
@@ -58,10 +62,9 @@ jobs:
           export CFLAGS="-O0 -g -fno-inline"
           export CXXFLAGS="-O0 -g -fno-inline"
           gmake -j$(sysctl -n hw.ncpu) dsym package PLATFORM=${{ matrix.platform }}
-          
-         
+
       - name: Upload regular ipa
-        uses: actions/upload-artifact@main
+        uses: actions/upload-artifact@v4
         with:
           name: org.angelauramc.amethyst-${{ matrix.platform_name }}.ipa
           path: artifacts/org.angelauramc.amethyst-*-${{ matrix.platform_name }}.ipa
