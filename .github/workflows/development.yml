@@ -61,9 +61,9 @@ jobs:
           sysctl -n hw.ncpu
           export CFLAGS="-O0 -g -fno-inline"
           export CXXFLAGS="-O0 -g -fno-inline"
-          # Build both IPA and TIPA
-          gmake -j$(sysctl -n hw.ncpu) dsym package PLATFORM=${{ matrix.platform }}
-          gmake -j$(sysctl -n hw.ncpu) dsym package PLATFORM=${{ matrix.platform }} TROLLSTORE_JIT_ENT=1
+          # Build both IPA and TIPA with RUNNER=1 to skip JRE download
+          gmake -j$(sysctl -n hw.ncpu) dsym package PLATFORM=${{ matrix.platform }} RUNNER=1
+          gmake -j$(sysctl -n hw.ncpu) dsym package PLATFORM=${{ matrix.platform }} TROLLSTORE_JIT_ENT=1 RUNNER=1
 
       - name: Upload regular ipa
         uses: actions/upload-artifact@main
