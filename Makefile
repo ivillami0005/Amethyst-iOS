@@ -152,18 +152,13 @@ METHOD_PACKAGE = \
 # Function to download and unpack Java runtimes.
 METHOD_JAVA_UNPACK = \
 	cd $(SOURCEDIR)/depends; \
-	if [ ! -f "java-$(1)-openjdk/release" ]; then \
+	if [ ! -f "java-$(1)-openjdk/release" ] && [ ! -f "$(ls jre$(1)-*.tar.xz)" ]; then \
 		if [ "$(RUNNER)" != "1" ]; then \
 			wget '$(2)' -q --show-progress; \
 			unzip jre*-ios-aarch64.zip && rm jre*-ios-aarch64.zip; \
-			mkdir -p java-$(1)-openjdk; \
-			tar xvf jre$(1)-*.tar.xz -C java-$(1)-openjdk; \
-		else \
-			mkdir -p java-$(1)-openjdk/lib; \
-			echo "IMPLEMENTOR=\"GitHub Actions Dummy JRE\"" > java-$(1)-openjdk/release; \
-			touch java-$(1)-openjdk/lib/rt.jar; \
-			touch java-$(1)-openjdk/lib/modules; \
 		fi; \
+		mkdir -p java-$(1)-openjdk; \
+		tar xvf jre$(1)-*.tar.xz -C java-$(1)-openjdk; \
 	fi
 
 # Function to codesign binaries.
